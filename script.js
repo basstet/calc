@@ -1,3 +1,5 @@
+'use strict';
+
 let money = 2000,
     income = 'фриланс',
     addExpenses = 'налоги, Аренда, страховка, связь',
