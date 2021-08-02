@@ -1,42 +1,17 @@
 'use strict';
 
-let money = 2000,
+const money = +prompt(`Ваш месячный доход?`),
   income = 'фриланс',
-  addExpenses = 'налоги, Аренда, страховка, связь',
-  deposit = true,
-  mission = 50000,
-  period = 12,
-  budgetDay = money / 30,
-  expenses1,
-  expenses2,
-  amount1,
-  amount2,
-  budgetMonth;
-
-// console.log(typeof money, typeof income, typeof deposit);
-// console.log(addExpenses.length);
-// console.log(`Период равен ${period} месяцев`);
-// console.log(`Цель - заработать ${mission} евро`);
-// console.log(addExpenses.toLowerCase().split(', '));
-// console.log(budgetDay);
-
-money = +prompt(`Ваш месячный доход?`);
-addExpenses = prompt(`Перечислите возможные расходы за рассчитываемый период через запятую`, `Квартплата, проездной, кредит`);
-deposit = confirm(`Есть ли у вас депозит в банке?`);
-
-expenses1 = prompt(`Введите обязательную статью расходов`);
-amount1 = +prompt(`Во сколько это обойдется?`);
-expenses2 = prompt(`Введите обязательную статью расходов`);
-amount2 = +prompt(`Во сколько это обойдется?`);
-
-budgetMonth = money - amount1 - amount2;
-console.log(`Бюджет на месяц: ${budgetMonth}`);
-
-period = Math.ceil(mission / budgetMonth);
-console.log(`Цель будет достигнута за ${period} месяцев(-а)`);
-
-budgetDay = Math.floor(budgetMonth / 30);
-console.log(`Бюджет на день: ${budgetDay}`);
+  addExpenses = prompt(`Перечислите возможные расходы за рассчитываемый период через запятую`, `Квартплата, проездной, кредит`),
+  deposit = confirm(`Есть ли у вас депозит в банке?`),
+  mission = 1000000,
+  expenses1 = prompt(`Введите обязательную статью расходов`),
+  amount1 = +prompt(`Во сколько это обойдется?`),
+  expenses2 = prompt(`Введите обязательную статью расходов`),
+  amount2 = +prompt(`Во сколько это обойдется?`),
+  budgetMonth = money - amount1 - amount2,
+  budgetDay = Math.floor(budgetMonth / 30),
+  period = Math.ceil(mission / budgetMonth);
 
 switch (true) {
   case (budgetDay >= 1200):
@@ -51,3 +26,12 @@ switch (true) {
   default:
     console.log(`Что-то пошло не так`);
 }
+
+console.log(typeof money, typeof income, typeof deposit);
+console.log(addExpenses.length);
+console.log(`Период равен ${period} месяцев(-а)`);
+console.log(`Цель - заработать ${mission} рублей`);
+console.log(addExpenses.toLowerCase().split(', '));
+console.log(`Бюджет на месяц: ${budgetMonth}`);
+console.log(`Цель будет достигнута за ${period} месяцев(-а)`);
+console.log(`Бюджет на день: ${budgetDay}`);
