@@ -1,5 +1,16 @@
 'use strict';
 
+// Переменные:
+const money = +prompt(`Ваш месячный доход?`, `70000`),
+  income = 'фриланс',
+  addExpenses = prompt(`Перечислите возможные расходы за рассчитываемый период через запятую`, `Квартплата, проездной, кредит`),
+  deposit = confirm(`Есть ли у вас депозит в банке?`),
+  mission = 1000000,
+  expenses1 = prompt(`Введите обязательную статью расходов`, `аренда`),
+  amount1 = +prompt(`Во сколько это обойдется?`, `20000`),
+  expenses2 = prompt(`Введите обязательную статью расходов`, `страховка`),
+  amount2 = +prompt(`Во сколько это обойдется?`, `5000`);
+
 // Функции:
 const showTypeOf = function(valToCheck) {
   return typeof valToCheck;
@@ -26,17 +37,8 @@ const getStatusIncome = function(budgD) {
   }
 };
 
-// Переменные:
-const money = +prompt(`Ваш месячный доход?`, `70000`),
-  income = 'фриланс',
-  addExpenses = prompt(`Перечислите возможные расходы за рассчитываемый период через запятую`, `Квартплата, проездной, кредит`),
-  deposit = confirm(`Есть ли у вас депозит в банке?`),
-  mission = 1000000,
-  expenses1 = prompt(`Введите обязательную статью расходов`, `аренда`),
-  amount1 = +prompt(`Во сколько это обойдется?`, `20000`),
-  expenses2 = prompt(`Введите обязательную статью расходов`, `страховка`),
-  amount2 = +prompt(`Во сколько это обойдется?`, `5000`),
-  accumulatedMonth = getAccumulatedMonth(money, getExpensesMonth(amount1, amount2)),
+// Переменные, вызывающие функции:
+const accumulatedMonth = getAccumulatedMonth(money, getExpensesMonth(amount1, amount2)),
   budgetDay = Math.floor(accumulatedMonth / 30),
   period = getTargetMonth(mission, accumulatedMonth);
 
