@@ -13,7 +13,7 @@ const start = function() {
 };
 start();
 
-let appData = {
+const appData = {
   // Переменные:
   income: {},
   addIncome: [],
@@ -43,19 +43,24 @@ let appData = {
       appData.expenses[expName] = +expAmount;
     }
     console.log(appData.expenses);
+
+    appData.getExpensesMonth();
+    appData.getBudget();
+    appData.getTargetMonth();
   },
   getExpensesMonth: function() {
     let sum = 0;
     for (let key in appData.expenses) {
       sum += +appData.expenses[key];
     }
-    return sum;
+    appData.expensesMonth = sum;
   },
-  getBudget: function(incAmt, outcAmt) {
-    return incAmt - outcAmt;
+  getBudget: function() {
+    appData.budgetMonth = money - appData.expensesMonth;
+    appData.budgetDay = Math.floor(appData.budgetMonth / 30);
   },
-  getTargetMonth: function(missionAmt, budgM) {
-    return Math.ceil(missionAmt / budgM);
+  getTargetMonth: function() {
+    appData.period = Math.ceil(appData.mission / appData.budgetMonth);
   },
   getStatusIncome: function(budgD) {
     switch (true) {
@@ -71,12 +76,6 @@ let appData = {
   }
 };
 appData.asking();
-
-// Вычисления и присвоения значений:
-appData.expensesMonth = appData.getExpensesMonth();
-appData.budgetMonth = appData.getBudget(money, appData.expensesMonth);
-appData.budgetDay = Math.floor(appData.budgetMonth / 30);
-appData.period = appData.getTargetMonth(appData.mission, appData.budgetMonth);
 
 // Вывод результатов:
 console.log(`Расходы за месяц: ${appData.expensesMonth}`);
