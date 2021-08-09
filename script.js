@@ -1,5 +1,36 @@
 'use strict';
 
+// Элементы DOM:
+const btnStart = document.getElementById('start'),
+      btnAddInc = document.getElementsByTagName('button')[0],
+      btnAddExp = document.getElementsByTagName('button')[1],
+      chkDeposit = document.querySelector('#deposit-check'),
+      // возм. доход:
+      inpAdIncome1 = document.querySelectorAll('.additional_income-item')[0],
+      inpAdIncome2 = document.querySelectorAll('.additional_income-item')[1],
+      // мес. доход:
+      inpSalaryAmt = document.querySelector('.salary-amount'),
+      // доп. доход:
+      inpIncTtl = document.querySelector('.income-items .income-title'),
+      inpIncAmt = document.querySelector('.income-items .income-amount'),
+      // обяз. расходы:
+      inpExpTtl = document.querySelector('.expenses-items .expenses-title'),
+      inpExpAmt = document.querySelector('.expenses-items .expenses-amount'),
+      // возм. расходы:
+      inpAdExpList = document.querySelector('.additional_expenses-item'),
+      // цель:
+      inpTarAmt = document.querySelector('.target-amount'),
+      // период расчета:
+      inpPrd = document.querySelector('.period-select'),
+      // поля справа:
+      inpValBudgetM = document.getElementsByClassName('budget_month-value')[0],
+      inpValBudgetD = document.getElementsByClassName('budget_day-value')[0],
+      inpValExpM = document.getElementsByClassName('expenses_month-value')[0],
+      inpValAdInc = document.getElementsByClassName('additional_income-value')[0],
+      inpValAdExp = document.getElementsByClassName('additional_expenses-value')[0],
+      inpValIncPrd = document.getElementsByClassName('income_period-value')[0],
+      inpValTargM = document.getElementsByClassName('target_month-value')[0];
+
 const isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
