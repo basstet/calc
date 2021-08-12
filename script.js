@@ -215,4 +215,4 @@ inpSalaryAmt.addEventListener('change', function(event) {
 });
 btnAddInc.addEventListener('click', appData.addIncomeBlock);
 btnAddExp.addEventListener('click', appData.addExpensesBlock);
-periodSelect.addEventListener('change', appData.changePeriodNum);
+periodSelect.addEventListener('input', appData.changePeriodNum);
