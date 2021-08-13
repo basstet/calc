@@ -69,6 +69,7 @@ const appData = {
     dataInputs.forEach(function(item) {
       item.readOnly = true;
     });
+    btnStart.disabled = 'true';
     btnStart.style.display = 'none';
     btnReset.style.display = 'inline-block';
   },
@@ -80,8 +81,8 @@ const appData = {
     resultAdInc.value = this.addIncome.join(', ');
     resultIncPrd.value = this.calcSavedMoney();
     periodSelect.addEventListener('change', function() {
-      resultIncPrd.value = appData.calcSavedMoney();
-    });
+      resultIncPrd.value = this.calcSavedMoney();
+    }.bind(this));
     resultTargM.value = this.getTargetMonth();
   },
   reset: function() {
@@ -138,9 +139,9 @@ const appData = {
       let itemIncome = item.querySelector('.income-title').value,
           cashIncome = item.querySelector('.income-amount').value;
       if (itemIncome !== '' && cashIncome !== '') {
-        appData.income[itemIncome] = +cashIncome;
+        this.income[itemIncome] = +cashIncome;
       }
-    });
+    }, this);
   },
   // сумма доп. доходов:
   getIncomeMonth: function() {
@@ -166,9 +167,9 @@ const appData = {
     inpAdIncome.forEach(function(item) {
       let itemValue = item.value.trim();
       if (itemValue !== '') {
-        appData.addIncome.push(itemValue);
+        this.addIncome.push(itemValue);
       }
-    });
+    }, this);
   },
   // обязательные расходы:
   getExpenses: function() {
@@ -176,9 +177,9 @@ const appData = {
       let itemExpenses = item.querySelector('.expenses-title').value,
           cashExpenses = item.querySelector('.expenses-amount').value;
       if (itemExpenses !== '' && cashExpenses !== '') {
-        appData.expenses[itemExpenses] = +cashExpenses;
+        this.expenses[itemExpenses] = +cashExpenses;
       }
-    });
+    }, this);
   },
   // обязательные расходы (добавление полей):
   addExpensesBlock: function() {
@@ -197,9 +198,9 @@ const appData = {
     addExpenses.forEach(function(item) {
       item = item.trim();
       if (item !== '') {
-        appData.addExpenses.push(item);
+        this.addExpenses.push(item);
       }
-    });
+    }, this);
   },
   // сумма расходов:
   getExpensesMonth: function() {
@@ -239,45 +240,36 @@ const appData = {
     }
   },
   getInfoDeposit: function() {
-    if (appData.deposit) {
+    if (this.deposit) {
       let percentDeposit,
           moneyDeposit;
       do {
         percentDeposit = prompt(`Какой годовой процент?`);
       }
       while (!isNumber(percentDeposit)); // валидация числа
-      appData.percentDeposit = +percentDeposit;
+      this.percentDeposit = +percentDeposit;
 
       do {
         moneyDeposit = prompt(`Какая сумма внесена?`);
       }
       while (!isNumber(moneyDeposit)); // валидация числа
-      appData.moneyDeposit = +moneyDeposit;
+      this.moneyDeposit = +moneyDeposit;
     }
   }
 };
 
-// чтобы this функции start и reset ссылался на appData:
-const startBinded = appData.start.bind(appData);
-const resetBinded = appData.reset.bind(appData);
-
 // нажатие кнопки рассчитать:
-if (inpSalaryAmt.value === '') {
-  btnStart.disabled = 'true';
-} else {
-  btnStart.removeAttribute('disabled');
-  btnStart.addEventListener('click', startBinded);
-}
-inpSalaryAmt.addEventListener('change', function(event) {
-  if (event.target.value !== '') {
+btnStart.disabled = 'true';
+inpSalaryAmt.addEventListener('input', function(event) {
+  if (event.target.value.trim() !== '') {
     btnStart.removeAttribute('disabled');
-    btnStart.addEventListener('click', startBinded);
   } else {
     btnStart.disabled = 'true';
   }
 });
+btnStart.addEventListener('click', appData.start.bind(appData));
 // нажатие кнопки сбросить:
-btnReset.addEventListener('click', resetBinded);
+btnReset.addEventListener('click', appData.reset.bind(appData));
 // добавление полей при нажатии кнопки "+":
 btnAddInc.addEventListener('click', appData.addIncomeBlock);
 btnAddExp.addEventListener('click', appData.addExpensesBlock);
