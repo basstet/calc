@@ -181,6 +181,10 @@ AppData.prototype.addIncomeBlock = function() {
   incomeItems[0].parentNode.insertBefore(cloneincomeItem, btnAddInc);
   incomeItems = document.querySelectorAll('.income-items');
 
+  for (let item of document.querySelectorAll('.income-items input')) {
+    item.addEventListener('input', this.inputValidation);
+  }
+
   if (incomeItems.length === 3) {
     btnAddInc.style.display = 'none';
   }
@@ -217,6 +221,10 @@ AppData.prototype.addExpensesBlock = function() {
 
   expensesItems[0].parentNode.insertBefore(cloneExpensesItem, btnAddExp);
   expensesItems = document.querySelectorAll('.expenses-items');
+
+  for (let item of document.querySelectorAll('.expenses-items input')) {
+    item.addEventListener('input', this.inputValidation);
+  }
 
   if (expensesItems.length === 3) {
     btnAddExp.style.display = 'none';
@@ -310,16 +318,16 @@ AppData.prototype.eventsListeners = function() {
   // нажатие кнопки сбросить:
   btnReset.addEventListener('click', this.reset.bind(this));
   // добавление полей при нажатии кнопки "+":
-  btnAddInc.addEventListener('click', this.addIncomeBlock);
-  btnAddExp.addEventListener('click', this.addExpensesBlock);
+  btnAddInc.addEventListener('click', this.addIncomeBlock.bind(this));
+  btnAddExp.addEventListener('click', this.addExpensesBlock.bind(this));
   // отслеживание ползунка периода расчета
   periodSelect.addEventListener('input', this.changePeriodNum);
   // проверка введенных в поля данных:
   for (let item of allNameInputs) {
-    item.addEventListener('keyup', this.inputValidation);
+    item.addEventListener('input', this.inputValidation);
   }
   for (let item of allSumInputs) {
-    item.addEventListener('keyup', this.inputValidation);
+    item.addEventListener('input', this.inputValidation);
   }
 };
 
