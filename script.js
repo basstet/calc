@@ -29,7 +29,11 @@ const btnStart = document.getElementById('start'),
       // все поля ввода слева:
       dataInputs = document.querySelectorAll('.data input[type=text]'),
       // все поля ввода справа (результаты):
-      resultInputs = document.querySelectorAll('.result input[type=text]');
+      resultInputs = document.querySelectorAll('.result input[type=text]'),
+      // все поля для ввода наименования:
+      allNameInputs = document.querySelectorAll('input[placeholder="Наименование"]'),
+      // все поля для ввода суммы:
+      allSumInputs = document.querySelectorAll('input[placeholder="Сумма"]');
 
 // доп. доход (блок):
 let incomeItems = document.querySelectorAll('.income-items');
@@ -137,6 +141,15 @@ AppData.prototype.reset = function() {
   btnStart.style.display = 'inline-block';
 };
 
+// проверка вводимых в поля данных:
+AppData.prototype.inputValidation = function() {
+  if (this.placeholder === 'Наименование') {
+    this.value = this.value.replace(/[\w]/g, '');
+  } else if (this.placeholder === 'Сумма') {
+    this.value = this.value.replace(/[^\d\.]/g, '');
+  }
+};
+
 // дополнительный доход:
 AppData.prototype.getIncome = function() {
   incomeItems.forEach(function(item) {
@@ -160,6 +173,10 @@ AppData.prototype.getIncomeMonth = function() {
 // дополнительный доход (добавление полей):
 AppData.prototype.addIncomeBlock = function() {
   const cloneincomeItem = incomeItems[0].cloneNode(true);
+
+  for (let item of cloneincomeItem.querySelectorAll('input')) {
+    item.value = '';
+  }
 
   incomeItems[0].parentNode.insertBefore(cloneincomeItem, btnAddInc);
   incomeItems = document.querySelectorAll('.income-items');
@@ -193,6 +210,10 @@ AppData.prototype.getExpenses = function() {
 // обязательные расходы (добавление полей):
 AppData.prototype.addExpensesBlock = function() {
   const cloneExpensesItem = expensesItems[0].cloneNode(true);
+
+  for (let item of cloneExpensesItem.querySelectorAll('input')) {
+    item.value = '';
+  }
 
   expensesItems[0].parentNode.insertBefore(cloneExpensesItem, btnAddExp);
   expensesItems = document.querySelectorAll('.expenses-items');
@@ -293,6 +314,13 @@ AppData.prototype.eventsListeners = function() {
   btnAddExp.addEventListener('click', this.addExpensesBlock);
   // отслеживание ползунка периода расчета
   periodSelect.addEventListener('input', this.changePeriodNum);
+  // проверка введенных в поля данных:
+  for (let item of allNameInputs) {
+    item.addEventListener('keyup', this.inputValidation);
+  }
+  for (let item of allSumInputs) {
+    item.addEventListener('keyup', this.inputValidation);
+  }
 };
 
 const appData = new AppData();
