@@ -10,7 +10,7 @@ const btnStart = document.getElementById('start'),
       // возм. доход:
       inpAdIncome = document.querySelectorAll('.additional_income-item'),
       // возм. расходы:
-      inpAdExpList = document.querySelector('.additional_expenses-item'),
+      inpAdExpenses = document.querySelectorAll('.additional_expenses-item'),
       // депозит:
       chkDeposit = document.querySelector('#deposit-check'),
       // цель:
@@ -26,19 +26,20 @@ const btnStart = document.getElementById('start'),
       resultAdExp = document.querySelector('.additional_expenses-value'),
       resultIncPrd = document.querySelector('.income_period-value'),
       resultTargM = document.querySelector('.target_month-value'),
-      // все поля ввода слева:
-      dataInputs = document.querySelectorAll('.data input[type=text]'),
       // все поля ввода справа (результаты):
       resultInputs = document.querySelectorAll('.result input[type=text]'),
       // все поля для ввода наименования:
       allNameInputs = document.querySelectorAll('input[placeholder="Наименование"]'),
       // все поля для ввода суммы:
-      allSumInputs = document.querySelectorAll('input[placeholder="Сумма"]');
+      allSumInputs = document.querySelectorAll('input[placeholder="Сумма"]'),
+      // блоки доп. доходов и обяз. расходов:
+      incExpItems = {
+        incomeItems: document.querySelectorAll('.income-items'),
+        expensesItems: document.querySelectorAll('.expenses-items')
+      };
 
-// доп. доход (блок):
-let incomeItems = document.querySelectorAll('.income-items');
-// обяз. расходы (блок):
-let expensesItems = document.querySelectorAll('.expenses-items');
+// все поля ввода слева:
+let dataInputs = document.querySelectorAll('.data input[type=text]');
 
 const isNumber = (n) => {
   return !isNaN(parseFloat(n)) && isFinite(n);
@@ -64,11 +65,9 @@ class AppData {
 
   start() {
     this.budget = +inpSalaryAmt.value;
-    this.getIncome();
+    this.getIncExp();
     this.getIncomeMonth();
-    this.getAddIncome();
-    this.getExpenses();
-    this.getAddExpenses();
+    this.getAddIncExp();
     this.getExpensesMonth();
     this.getBudget();
     this.showResult();
@@ -119,22 +118,22 @@ class AppData {
     periodSelect.value = 1;
     periodAmount.textContent = periodSelect.value;
     // удаляем добавленные поля, если они были:
-    if (incomeItems.length > 1) {
-      if (incomeItems.length === 3) {
-        incomeItems[1].remove();
-        incomeItems[2].remove();
+    if (incExpItems.incomeItems.length > 1) {
+      if (incExpItems.incomeItems.length === 3) {
+        incExpItems.incomeItems[1].remove();
+        incExpItems.incomeItems[2].remove();
         btnAddInc.style.display = 'inline-block';
       } else {
-        incomeItems[1].remove();
+        incExpItems.incomeItems[1].remove();
       }
     }
-    if (expensesItems.length > 1) {
-      if (expensesItems.length === 3) {
-        expensesItems[1].remove();
-        expensesItems[2].remove();
+    if (incExpItems.expensesItems.length > 1) {
+      if (incExpItems.expensesItems.length === 3) {
+        incExpItems.expensesItems[1].remove();
+        incExpItems.expensesItems[2].remove();
         btnAddExp.style.display = 'inline-block';
       } else {
-        expensesItems[1].remove();
+        incExpItems.expensesItems[1].remove();
       }
     }
     // возвращаем кнопку рассчитать:
@@ -151,15 +150,19 @@ class AppData {
     }
   }
 
-  // дополнительный доход:
-  getIncome() {
-    incomeItems.forEach((item) => {
-      let itemIncome = item.querySelector('.income-title').value,
-          cashIncome = item.querySelector('.income-amount').value;
-      if (itemIncome !== '' && cashIncome !== '') {
-        this.income[itemIncome] = +cashIncome;
+  // дополнительный доход и обязательные расходы:
+  getIncExp() {
+    const count = (item) => {
+      const typeStr = item.className.split('-')[0],
+            itemTitle = item.querySelector(`.${typeStr}-title`).value,
+            itemAmount = item.querySelector(`.${typeStr}-amount`).value;
+
+      if (itemTitle !== '' && itemAmount !== '') {
+        this[typeStr][itemTitle] = +itemAmount;
       }
-    });
+    };
+    incExpItems.incomeItems.forEach(count);
+    incExpItems.expensesItems.forEach(count);
   }
 
   // сумма доп. доходов:
@@ -171,76 +174,50 @@ class AppData {
     this.incomeMonth = sum;
   }
 
-  // дополнительный доход (добавление полей):
-  addIncomeBlock() {
-    const cloneincomeItem = incomeItems[0].cloneNode(true);
+  // дополнительный доход и обязательные расходы (добавление полей):
+  addIncExpBlock(event) {
+    const btnAdd = event.target,
+          typeStr = btnAdd.parentNode.className,
+          cloneItem = incExpItems[`${typeStr}Items`][0].cloneNode(true);
 
-    for (let item of cloneincomeItem.querySelectorAll('input')) {
+    for (let item of cloneItem.querySelectorAll('input')) {
       item.value = '';
     }
 
-    incomeItems[0].parentNode.insertBefore(cloneincomeItem, btnAddInc);
-    incomeItems = document.querySelectorAll('.income-items');
+    incExpItems[`${typeStr}Items`][0].parentNode.insertBefore(cloneItem, btnAdd);
+    incExpItems[`${typeStr}Items`] = document.querySelectorAll(`.${typeStr}-items`);
 
-    for (let item of document.querySelectorAll('.income-items input')) {
+    for (let item of document.querySelectorAll(`.${typeStr}-items input`)) {
       item.addEventListener('input', this.inputValidation);
     }
 
-    if (incomeItems.length === 3) {
-      btnAddInc.style.display = 'none';
+    if (incExpItems[`${typeStr}Items`].length === 3) {
+      btnAdd.style.display = 'none';
     }
+    dataInputs = document.querySelectorAll('.data input[type=text]');
   }
 
-  // возможные доходы:
-  getAddIncome() {
-    inpAdIncome.forEach((item) => {
+  // возможные доходы и возможные расходы:
+  getAddIncExp() {
+    const count = (item) => {
       let itemValue = item.value.trim();
+
       if (itemValue !== '') {
-        this.addIncome.push(itemValue);
+        if (item.className === 'additional_income-item') {
+          this.addIncome.push(itemValue);
+        } else if (item.className === 'additional_expenses-item') {
+          itemValue = itemValue.split(',');
+          itemValue.forEach((item) => {
+            item = item.trim();
+            if (item !== '') {
+              this.addExpenses.push(item);
+            }
+          });
+        }
       }
-    });
-  }
-
-  // обязательные расходы:
-  getExpenses() {
-    expensesItems.forEach((item) => {
-      let itemExpenses = item.querySelector('.expenses-title').value,
-          cashExpenses = item.querySelector('.expenses-amount').value;
-      if (itemExpenses !== '' && cashExpenses !== '') {
-        this.expenses[itemExpenses] = +cashExpenses;
-      }
-    });
-  }
-
-  // обязательные расходы (добавление полей):
-  addExpensesBlock() {
-    const cloneExpensesItem = expensesItems[0].cloneNode(true);
-
-    for (let item of cloneExpensesItem.querySelectorAll('input')) {
-      item.value = '';
-    }
-
-    expensesItems[0].parentNode.insertBefore(cloneExpensesItem, btnAddExp);
-    expensesItems = document.querySelectorAll('.expenses-items');
-
-    for (let item of document.querySelectorAll('.expenses-items input')) {
-      item.addEventListener('input', this.inputValidation);
-    }
-
-    if (expensesItems.length === 3) {
-      btnAddExp.style.display = 'none';
-    }
-  }
-
-  // возможные расходы:
-  getAddExpenses() {
-    let addExpenses = inpAdExpList.value.split(',');
-    addExpenses.forEach((item) => {
-      item = item.trim();
-      if (item !== '') {
-        this.addExpenses.push(item);
-      }
-    });
+    };
+    inpAdIncome.forEach(count);
+    inpAdExpenses.forEach(count);
   }
 
   // сумма расходов:
@@ -319,8 +296,8 @@ class AppData {
     // нажатие кнопки сбросить:
     btnReset.addEventListener('click', this.reset.bind(this));
     // добавление полей при нажатии кнопки "+":
-    btnAddInc.addEventListener('click', this.addIncomeBlock.bind(this));
-    btnAddExp.addEventListener('click', this.addExpensesBlock.bind(this));
+    btnAddInc.addEventListener('click', this.addIncExpBlock.bind(this));
+    btnAddExp.addEventListener('click', this.addIncExpBlock.bind(this));
     // отслеживание ползунка периода расчета
     periodSelect.addEventListener('input', this.changePeriodNum);
     // проверка введенных в поля данных:
