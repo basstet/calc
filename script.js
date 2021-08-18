@@ -287,24 +287,14 @@ class AppData {
       depositPercent.value = '';
       depositPercent.style.display = 'inline-block';
       depositPercent.addEventListener('input', this.inputValidation);
-      depositPercent.addEventListener('blur', function() {
+      depositPercent.addEventListener('input', function() {
         if (this.value > 100) {
-          alert(`Введите корректное значение в поле "Процент"`);
           this.value = '';
-          btnStart.disabled = 'true';
-        } else if (depositPercent.value && inpSalaryAmt.value) {
-          btnStart.removeAttribute('disabled');
         }
       });
-      if (depositPercent.value && inpSalaryAmt.value) {
-        btnStart.removeAttribute('disabled');
-      }
     } else {
       depositPercent.value = selectValue;
       depositPercent.style.display = 'none';
-      if (depositPercent.value && inpSalaryAmt.value) {
-        btnStart.removeAttribute('disabled');
-      }
     }
   }
 
@@ -324,9 +314,6 @@ class AppData {
       depositPercent.value = '';
       this.deposit = false;
       depositBank.removeEventListener('change', this.changePercent.bind(this));
-      if (inpSalaryAmt.value) {
-        btnStart.removeAttribute('disabled');
-      }
     }
   }
 
